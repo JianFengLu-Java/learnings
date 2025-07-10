@@ -1,20 +1,47 @@
 import { PrismaClient } from "../../generated/prisma";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
-export async function POST(req: { json: () => PromiseLike<{ name: any; email: any; password:any}> | { name: any; email: any; password:any; }; }){
-    const {name,email,password} = await req.json();
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password,salt );
+export async function POST(req: Request) {
+    try {
+        const { name, email, password } = await req.json() as {
+            name: string;
+            email: string;
+            password: string;
+        };
 
-    try{
+        if (!name || !email || !password) {
+            return new Response(JSON.stringify({
+                message: "账号不能为空！",
+                code:401,
+            }), {
+                status: 200,
+            });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const newUser = await prisma.user.create({
-            data: {name,email,password:hashedPassword}
-        })
-        return new Response(JSON.stringify(newUser),{status: 200});
-    }catch(e){
-        return new Response(JSON.stringify(e),{status: 400});
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+            },
+        });
+
+        return new Response(JSON.stringify({data:newUser,code:200}), {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+    } catch (e) {
+        console.error("Register error:", e);
+        return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+            status: 500,
+        });
     }
 }
-

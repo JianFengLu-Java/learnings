@@ -10,9 +10,10 @@ import {LXButton} from "@/components/LXButton";
 
 export default function registerPage() {
     const {isOpen, onOpen, onOpenChange} = useDisclosure()
+    const [submitted, setSubmitted] = useState<Record<string, FormDataEntryValue> | null>(null)
     const [modalTitle, setModalTitle] = useState("提示")
     const [modalBody, setModalBody] = useState("默认内容")
-    const [submitted, setSubmitted] = useState<Record<string, FormDataEntryValue> | null>(null)
+
 
     const registerOnClick = async (e:any) => {
         e.preventDefault();
@@ -20,21 +21,28 @@ export default function registerPage() {
         setSubmitted(data)
 
         try{
-            await axios.post('/api/register', {
-                name:'hello',
-                email:'hello@gmail.com',
-                password:'123456',
-            }).then((res)=>{
-                console.log(res);
-                addToast({
-                    icon:'success',
-                    title:'success',
-                    description:`hello${res.data.name}`,
-                })
-                setModalTitle('成功')
-                setModalBody(res.data)
-                onOpen()
+            const res = await axios.post('/api/register', {
+                name:data.name,
+                email:data.email,
+                password:data.password,
             })
+            if(res.data.code === 200){
+                setModalTitle('成功')
+                setModalBody(JSON.stringify(res.data.data.name)+"注册成功");
+                onOpen()
+                addToast({
+                    title:'ok',
+                    description:'register success',
+                    variant:'bordered',
+                    radius:'full'
+                })
+
+            }
+            else{
+                setModalTitle('注册失败')
+                setModalBody(res.data.message);
+                onOpen()
+            }
         }catch(err){
             console.log("hello",err);
             addToast({
@@ -46,7 +54,7 @@ export default function registerPage() {
                 timeout:1000
             })
             setModalTitle("失败")
-            setModalBody(JSON.stringify(submitted))
+            setModalBody(JSON.stringify(data)+`${err.message}`)
             onOpen()
         }
 
@@ -62,15 +70,14 @@ export default function registerPage() {
                 <Button type={'submit'}>注册</Button>
             </Form>
 
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                <ModalContent>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
+                <ModalContent className="overflow-x-hidden break-all">
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">{modalTitle}</ModalHeader>
-                            <ModalBody className={'max-w-[400px] h-fit'}>
+                            <ModalBody>
                                 <p>
                                     {modalBody}
-
                                 </p>
                             </ModalBody>
                             <ModalFooter>
