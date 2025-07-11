@@ -41,6 +41,17 @@ export default function Home() {
                         </Code>)
                     }
                 )
+            }else{
+                addToast(
+                    {
+                        title: "错误",
+                        description: (<Code>密码错误
+                            {JSON.stringify(data)}
+                        </Code>),
+                        variant:'solid',
+                        color:'danger'
+                    }
+                )
             }
         }catch(err){
             console.log(err)
