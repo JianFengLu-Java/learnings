@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 
 export default function middleware(req:NextRequest){
-    console.log('middleware 执行：'+req.nextUrl.pathname);
+    console.log('middleware 执行：'+req.nextUrl.searchParams.get("name"));
     return NextResponse.next();//放行
 }
 

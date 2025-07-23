@@ -38,23 +38,24 @@ export default function Home() {
                         title: "info",
                         description: (<Code>
                             {JSON.stringify(data)}
-                        </Code>)
-                    }
-                )
-            }else{
-                addToast(
-                    {
-                        title: "错误",
-                        description: (<Code>密码错误
-                            {JSON.stringify(data)}
                         </Code>),
-                        variant:'solid',
-                        color:'danger'
+                        timeout:1000,
                     }
                 )
+                router.push("/dashboard")
             }
         }catch(err){
             console.log(err)
+            addToast(
+                {
+                    title: "错误",
+                    description: (<Code>
+                        {JSON.stringify(err.response.data.message)}
+                    </Code>),
+                    color:'danger',
+                    timeout:800
+                }
+            )
         }
 
     }
@@ -68,7 +69,7 @@ export default function Home() {
                         <div>
                             <Image draggable={false} className={'hidden md:block object-cover w-[400px] h-[600px]'}
                                    radius={"none"}
-                                   src={"https://images.fineartamerica.com/images/artworkimages/mediumlarge/1/the-starry-night-vincent-van-gogh-1889-peter-barritt.jpg"}/>
+                                   src={"https://pbn-cdn-cf.lexinshengwen.com/vincent/starry-night.jpg"}/>
                         </div>
                         <Divider orientation={"vertical"}/>
                         <div className={'min-w-[450px] flex flex-col  '}>
