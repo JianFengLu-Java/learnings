@@ -53,7 +53,7 @@ export default function Home() {
     }
 
     return (
-        <section className="flex flex-col h-full items-center justify-center ">
+        <section className="flex flex-col h-screen items-center justify-center ">
             <Card className={'rounded-[30px]'}>
                 <CardBody className="p-0 h-[600px]">
 
