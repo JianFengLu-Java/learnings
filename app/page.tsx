@@ -20,44 +20,36 @@ import {LXQRCode} from "@/components/LXQrCode";
 import {io} from "socket.io-client"
 import {useRouter} from "next/navigation";
 import axios from "axios";
+import {signIn} from "next-auth/react";
 
 export default function Home() {
     const [select, setSelect] = useState("access")
+    const [loading, setLoading] = useState(false);
 
     const router = useRouter()
 
     const submit = async (e) => {
+        setLoading(true);
         e.preventDefault()
         const {name, password} = Object.fromEntries(new FormData(e.currentTarget))
         const data = {name:name, password:password}
-        try{
-            const res = await axios.post("/api/login",data)
-            if(res.status === 200){
-                addToast(
-                    {
-                        title: "info",
-                        description: (<Code>
-                            {JSON.stringify(data)}
-                        </Code>),
-                        timeout:1000,
-                    }
-                )
-                router.push("/dashboard")
-            }
-        }catch(err){
-            console.log(err)
-            addToast(
-                {
-                    title: "错误",
-                    description: (<Code>
-                        {JSON.stringify(err.response.data.message)}
-                    </Code>),
-                    color:'danger',
-                    timeout:800
-                }
-            )
-        }
 
+        const res= await signIn("credentials",{
+            name,
+            password,
+            redirect: false,
+        })
+        console.log(res)
+        if (res.error) {
+            addToast({
+                title: "Error",
+                description: res.error
+            })
+            setLoading(false);
+        }else {
+            setLoading(false);
+            router.replace("/dashboard");
+        }
     }
 
     return (
@@ -75,10 +67,9 @@ export default function Home() {
                         <div className={'min-w-[450px] flex flex-col  '}>
 
                             <div className={'mt-8 ml-6 mb-2 md:mt-6 grid gap-2'}>
-                                <p className={'text-3xl text-zinc-600 font-bold select-none opacity-80'}
-                                   draggable={false}>乐信圣文插画管理平台</p>
-                                <p className={'text-xs text-gray-400 font-medium'}>永远相信美好的事情即将发生
-                                    Vicent2.0</p>
+                                <p className={'text-3xl text-zinc-800 font-bold select-none opacity-80'}
+                                   draggable={false}>Learnings插画管理平台</p>
+                                <p className={'text-xs text-gray-400 font-medium'}>将平凡无趣的时间转化为有意义的时光</p>
                             </div>
                             <Divider/>
 
@@ -153,12 +144,12 @@ export default function Home() {
                                                     </div>
                                                     <div
                                                         className={'grid grid-cols-1 w-full justify-center items-center gap-2 '}>
-                                                        <LXButton  isBordered={true} size={'lg'} type={'submit'}
-                                                        >立即登录</LXButton>
+                                                        <LXButton  isBordered={true} size={'lg'} type={'submit'} isLoading={loading}>
+                                                        立即登录</LXButton>
                                                         <LXButton className={'bg-zinc-100 w-full border-zinc-200'}
                                                                   isBordered={true}
                                                                   onPress={() => {
-                                                                      router.push('/register');
+                                                                      router.replace('/register');
                                                                   }}
                                                         >现在注册</LXButton>
 

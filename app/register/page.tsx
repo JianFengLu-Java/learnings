@@ -17,15 +17,18 @@ import {
 import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@heroui/modal";
 import {useEffect, useState} from "react";
 import {LXButton} from "@/components/LXButton";
-import {Card, CardBody} from "@heroui/card";
+import {Card, CardBody, CardFooter} from "@heroui/card";
 import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
 import {Bar, BarChart} from "recharts";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 export default function registerPage() {
     const {isOpen, onOpen, onOpenChange} = useDisclosure()
     const [submitted, setSubmitted] = useState<Record<string, FormDataEntryValue> | null>(null)
     const [modalTitle, setModalTitle] = useState("提示")
     const [modalBody, setModalBody] = useState("默认内容")
+    const router = useRouter()
 
     const data =[
         {
@@ -119,25 +122,26 @@ export default function registerPage() {
 
     }
     return (
-        <>
-            欢迎注册
-            <Form onSubmit={registerOnClick}>
-                <Input label={'输入用户名'} name={'name'}/>
-                <Input label={'输入密码'} type={'password'} name={'password'} />
-                <Input label={'重复密码'} type={'password'} name={'password_confirmation'}/>
-                <Input label={'邮箱'} type={'email'} name={'email'}/>
-                <Button type={'submit'}>注册</Button>
-            </Form>
-            <Table>
-                <TableHeader>
-                    <TableColumn>hello</TableColumn>
-                </TableHeader>
-                <TableBody>
-                    <TableRow key={'1'}>
-                        <TableCell>name</TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+        <div className={'flex justify-center items-center w-full h-screen'}>
+            <Card>
+                <Form onSubmit={registerOnClick}>
+                <CardBody className={'space-y-2'}>
+
+                        <Input label={'输入用户名'} name={'name'}/>
+                        <Input label={'输入密码'} type={'password'} name={'password'} />
+                        <Input label={'重复密码'} type={'password'} name={'password_confirmation'}/>
+                        <Input label={'邮箱'} type={'email'} name={'email'}/>
+                </CardBody>
+                <CardFooter className={'gap-4'}>
+                    <LXButton isBordered={true} type={'submit'}>注册</LXButton>
+                    <Button variant={'bordered'} onPress={()=>{
+                        router.replace('/')
+                    }}>返回</Button>
+
+                </CardFooter>
+                </Form>
+
+            </Card>
 
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
                 <ModalContent className="overflow-x-hidden break-all">
@@ -158,19 +162,19 @@ export default function registerPage() {
                     )}
                 </ModalContent>
             </Modal>
-            <Card shadow={'sm'}>
-                <CardBody>
-                    <ChartContainer config={chartsConfig} className={'w-full min-h-[200px]'}>
-                        <BarChart data={data}>
-                            <ChartTooltip cursor={false} content={<ChartTooltipContent/>}/>
+            {/*<Card shadow={'sm'}>*/}
+            {/*    <CardBody>*/}
+            {/*        <ChartContainer config={chartsConfig} className={'w-full min-h-[200px]'}>*/}
+            {/*            <BarChart data={data}>*/}
+            {/*                <ChartTooltip cursor={false} content={<ChartTooltipContent/>}/>*/}
 
-                            <Bar dataKey={'desktop'} radius={5} fill={'var(--color-desktop)'}/>
-                            <Bar dataKey={'mobile'} radius={5} fill={'var(--color-mobile)'}/>
-                        </BarChart>
+            {/*                <Bar dataKey={'desktop'} radius={5} fill={'var(--color-desktop)'}/>*/}
+            {/*                <Bar dataKey={'mobile'} radius={5} fill={'var(--color-mobile)'}/>*/}
+            {/*            </BarChart>*/}
 
-                    </ChartContainer>
-                </CardBody>
-            </Card>
-        </>
+            {/*        </ChartContainer>*/}
+            {/*    </CardBody>*/}
+            {/*</Card>*/}
+        </div>
     )
 }
