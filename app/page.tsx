@@ -123,6 +123,12 @@ export default function Home() {
                                                         label={'请输入密码'}
                                                         size={'sm'}
                                                         type={'password'}
+                                                        validate={(value)=>{
+                                                            if(value.length<4){
+                                                                return "nonono"
+                                                            }
+                                                            return value==='hello'?"nice":null;
+                                                        }}
                                                         classNames={{
                                                             input: ["hover:bg-gray-100"],
                                                             inputWrapper: ["border",

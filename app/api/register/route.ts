@@ -31,6 +31,8 @@ export async function POST(req: Request) {
             },
         });
 
+        console.log('res:', newUser);
+
         return new Response(JSON.stringify({data:newUser,code:200}), {
             status: 200,
             headers: {
