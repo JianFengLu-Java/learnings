@@ -1,15 +1,8 @@
 "use client"
 
 import {Link} from "@heroui/link";
-import {Snippet} from "@heroui/snippet";
-import {Code} from "@heroui/code";
-import {button as buttonStyles} from "@heroui/theme";
-
-import {siteConfig} from "@/config/site";
-import {title, subtitle} from "@/components/primitives";
-import {GithubIcon} from "@/components/icons";
 import {Card, CardBody} from "@heroui/card";
-import {Button} from "@heroui/button";
+
 import {Input} from "@heroui/input";
 import {LXButton} from "@/components/LXButton";
 import {Image} from "@heroui/image";
@@ -21,37 +14,33 @@ import {io} from "socket.io-client"
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import {signIn} from "next-auth/react";
+import {useForm} from "react-hook-form";
 
 export default function Home() {
     const [select, setSelect] = useState("access")
     const [loading, setLoading] = useState(false);
 
+    const {register,formState:{errors},handleSubmit} = useForm()
+
     const router = useRouter()
 
-    const submit = async (e) => {
-        setLoading(true);
-        e.preventDefault()
-        const {name, password} = Object.fromEntries(new FormData(e.currentTarget))
-        const data = {name:name, password:password}
-
-        const res= await signIn("credentials",{
-            name,
-            password,
+    const submit = async (data) => {
+        const res = await signIn("credentials", {
+            name: data.name,
+            password: data.password,
             redirect: false,
-        })
-        console.log(res)
+        });
+
         if (res.error) {
-            addToast({
-                title: "Error",
-                description: res.error
-            })
-            setLoading(false);
-        }else {
-            setLoading(false);
+            addToast({ title: "Error", description: res.error });
+        } else {
             router.replace("/dashboard");
         }
-    }
 
+        setLoading(false);
+    };
+
+    // @ts-ignore
     return (
         <section className="flex flex-col h-screen items-center justify-center ">
             <Card className={'rounded-[30px]'}>
@@ -90,66 +79,106 @@ export default function Home() {
                                     {select === "access" ? (
                                         <>
 
-                                            <div className={'h-full w-full justify-center '}>
+                                            <div className={'h-full w-full justify-center relative space-y-6'}>
 
                                                     <div className={'w-full justify-center flex mb-6'}>
                                                         <Avatar isBordered={true} size={'lg'} src={""} name={"LXER"}
                                                                 className={"bg-amber-400 select-none"}/>
                                                     </div>
-                                                <Form onSubmit={submit}>
-                                                    <Input
-                                                        name={'name'}
-                                                        label={'请输入账号'}
-                                                        size={'sm'}
-                                                        isClearable={true}
-                                                        classNames={{
-                                                            input: ["hover:bg-gray-100",
-                                                                "!text-zinc-700",
-                                                                "font-bold"
-                                                            ],
-                                                            inputWrapper: ["border",
-                                                                "bg-zinc-50",
-                                                                "data-[hover=true]:bg-zinc-100",
-                                                                "rounded-xl"
-                                                            ],
-                                                            label: ['peer-focus:text-blue-200', 'text-zinc-600'],
+                                                <Form onSubmit={handleSubmit(submit)}>
+                                                    <div className={'w-full h-[60px] mb-2'}>
+                                                        <Input
+                                                            label={'请输入账号'}
+                                                            size={'sm'}
+                                                            isClearable={true}
+                                                            {...register('name',{
+                                                                validate:(val)=>{
+                                                                    if (val && val.length < 3 || val.length > 16) {
+                                                                        return '错误：用户名不符合要求'
+                                                                    }else if(!val){
+                                                                        return '错误：用户名不能为空'
+                                                                    }
+                                                                    return true
+                                                                }
+                                                            })}
+                                                            classNames={{
+                                                                input: ["hover:bg-gray-100",
+                                                                    "!text-zinc-700",
+                                                                    "font-bold"
+                                                                ],
+                                                                inputWrapper: ["border",
+                                                                    "bg-zinc-50",
+                                                                    "data-[hover=true]:bg-zinc-100",
+                                                                    "rounded-xl"
+                                                                ],
+                                                                label: ['peer-focus:text-blue-200', 'text-zinc-600'],
 
-                                                        }}
-                                                        className={'mb-4'}
-                                                    />
-                                                    <Input
-                                                        name={'password'}
-                                                        isClearable={true}
-                                                        label={'请输入密码'}
-                                                        size={'sm'}
-                                                        type={'password'}
-                                                        validate={(value)=>{
-                                                            if(value.length<4){
-                                                                return "nonono"
-                                                            }
-                                                            return value==='hello'?"nice":null;
-                                                        }}
-                                                        classNames={{
-                                                            input: ["hover:bg-gray-100"],
-                                                            inputWrapper: ["border",
-                                                                "bg-zinc-50",
-                                                                "data-[hover=true]:bg-zinc-100",
-                                                                "rounded-xl"
-                                                            ],
-                                                        }}
-                                                        className={'mb-4'}
-                                                    />
-                                                    <div className={'w-full justify-between items-center flex p-2'}>
-                                                        <Checkbox color={'warning'} name={'check'}>
-                                                            <p className={'font-bold !text-sm !text-zinc-700'}>记住我</p>
-                                                        </Checkbox>
-
-                                                        <Link className={'cursor-help'}>
-                                                            <p className={'font-bold !text-sm !text-zinc-700'}>忘记密码？</p>
-                                                        </Link>
+                                                            }}
+                                                            className={'mb-1'}
+                                                        />
+                                                        {errors.name && (
+                                                            <p className={`text-sm ${
+                                                                errors.name.message.startsWith('错误')
+                                                                    ?'text-red-500 text-[12px]'
+                                                                    :errors.password.message.startsWith('警告')
+                                                                        ?'text-green-400'
+                                                                        :''
+                                                            }`}>
+                                                                {errors.name.message.split('：')[1]}
+                                                            </p>
+                                                        )}
                                                     </div>
+
+                                                    <div className={'w-full justify-center'}>
+                                                        <Input
+                                                            isClearable={true}
+                                                            label={'请输入密码'}
+                                                            size={'sm'}
+                                                            type={'password'}
+                                                            {...register('password',{
+                                                                validate:(val)=>{
+                                                                    if(!val){
+                                                                        return '错误：密码不能为空'
+                                                                    }
+                                                                    if(val.length<3){
+                                                                        return  '警告：密码长度小于3位'
+                                                                    }
+                                                                    return true
+                                                                }
+                                                            })}
+
+                                                            classNames={{
+                                                                input: ["hover:bg-gray-100"],
+                                                                inputWrapper: ["border",
+                                                                    "bg-zinc-50",
+                                                                    "data-[hover=true]:bg-zinc-100",
+                                                                    "rounded-xl"
+                                                                ],
+                                                            }}
+                                                            className={'mb-1'}
+                                                        />
+                                                        {errors.password && (
+                                                            <p className={`text-sm ${
+                                                                errors.password.message.startsWith('错误')?'text-red-500 text-[12px]':errors.password.message.startsWith('警告')?'text-green-400':''
+                                                            }`}>
+                                                                {errors.password.message.split('：')[1]}
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+
                                                     <div
-                                                        className={'grid grid-cols-1 w-full justify-center items-center gap-2 '}>
+                                                        className={'grid grid-cols-1 w-full justify-center items-center gap-2 absolute bottom-3'}>
+                                                        <div className={'w-full justify-between items-center flex p-2'}>
+                                                            <Checkbox color={'warning'} name={'check'}>
+                                                                <p className={'font-bold !text-sm !text-zinc-700'}>记住我</p>
+                                                            </Checkbox>
+
+                                                            <Link className={'cursor-help'}>
+                                                                <p className={'font-bold !text-sm !text-zinc-700'}>忘记密码？</p>
+                                                            </Link>
+                                                        </div>
+
                                                         <LXButton  isBordered={true} size={'lg'} type={'submit'} isLoading={loading}>
                                                         立即登录</LXButton>
                                                         <LXButton className={'bg-zinc-100 w-full border-zinc-200'}

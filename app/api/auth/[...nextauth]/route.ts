@@ -2,6 +2,8 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaClient } from "../../../generated/prisma";
 import bcrypt from "bcrypt";
+import {Simulate} from "react-dom/test-utils";
+import error = Simulate.error;
 const prismaClient = new PrismaClient();
 
 const handler = NextAuth({
@@ -21,13 +23,13 @@ const handler = NextAuth({
                 )
 
                 if (!user) {
-                    return null;
+                    throw new Error('用户名不存在')
                 }
 
                 const hashedPassword = await bcrypt.compare(credentials.password,user.password)
 
                 if (!hashedPassword) {
-                    return null;
+                    throw new Error('密码不正确')
                 }
 
                 return {

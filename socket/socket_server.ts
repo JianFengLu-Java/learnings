@@ -10,18 +10,18 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log("🟢 New client connected:", socket.id);
+    console.log("New client connected:", socket.id);
 
     socket.on("message", (data) => {
-        console.log("📩 Received message:", data);
+        console.log("Received message:", data);
         socket.emit("message", `Server received: ${data}`);
     });
 
     socket.on("disconnect", () => {
-        console.log("🔴 Client disconnected:", socket.id);
+        console.log("Client disconnected:", socket.id);
     });
 });
 
 server.listen(3001, () => {
-    console.log("✅ Socket.IO server running on http://localhost:3001");
+    console.log("Socket.IO server running on http://localhost:3001");
 });
