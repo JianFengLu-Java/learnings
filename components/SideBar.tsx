@@ -1,8 +1,10 @@
 "use client";
 
-import { Listbox, ListboxItem } from "@heroui/react";
+import {Listbox, ListboxItem, ListboxSection} from "@heroui/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import {IconDashboardFilled, IconSettings} from '@tabler/icons-react';
+import { IconBubbleText } from '@tabler/icons-react';
 
 export default function SideBar() {
     const pathname = usePathname();
@@ -39,7 +41,6 @@ export default function SideBar() {
                 aria-label="Sidebar Navigation"
                 selectedKeys={selectedKeys}
                 selectionMode="single"
-                variant={'faded'}
                 disallowEmptySelection={true    }
                 onSelectionChange={(keys) => {
                     const key = Array.from(keys)[0];
@@ -49,17 +50,34 @@ export default function SideBar() {
                         router.push(target);
                     }
                 }}
+                itemClasses={{
+                    base: `
+      px-3 py-2 rounded-xl box-border 
+      data-[selected=true]:bg-yellow-300 data-[selected=true]:text-default-700  data-[selected=true]:outline-2 data-[selected=true]:outline-[#887b32] data-[selected=true]:outline data-[selected=true]:outline-offset-0
+      data-[hover=true]:bg-yellow-300 data-[hover=true]:text-default-700 data-[hover=true]:outline-[#887b32] data-[hover=true]:outline-1 data-[hover=true]:outline data-[hover=true]:outline-offset-0
+      [&>span:last-child]:hidden  
+      
+    `,
+                }}
             >
                 <ListboxItem
                     key="home"
-                    className={itemClass}
+                    // className={itemClass}
                     description={"Home"}
-                    endContent={null}>
+                    endContent={null}
+                    startContent={<IconDashboardFilled size={36} className={'shrink-0'}/>}
+                >
                     主页
                 </ListboxItem>
-                <ListboxItem key="chat" className={itemClass}>
-                    聊天
+                <ListboxItem key="chat"
+                startContent={<IconBubbleText size={24} className={'shrink-0'}/>}>
+                    消息
                 </ListboxItem>
+                <ListboxSection title={'Settings'} className={'justify-end'}>
+                    <ListboxItem key="setting" startContent={<IconSettings size={24} className={'shrink-0 '}/>}>
+                        设置
+                    </ListboxItem>
+                </ListboxSection>
             </Listbox>
         </div>
     );

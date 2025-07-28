@@ -13,16 +13,16 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
-    Input,
 } from "@heroui/react";
 import { SessionProvider, signOut } from "next-auth/react";
 import SideBar from "@/components/SideBar";
+import {Input} from "@heroui/input";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [sidebarWidth, setSidebarWidth] = useState(260);
     const isResizing = useRef(false);
 
-    const MIN_WIDTH = 200;
+    const MIN_WIDTH = 80;
     const MAX_WIDTH = 400;
 
     useEffect(() => {
@@ -63,23 +63,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                     <NavbarContent className="hidden sm:flex gap-4" justify="center">
                         <NavbarItem>
-                            <Input
-                                radius="full"
-                                placeholder="Search..."
-                                classNames={{
-                                    input: ["hover:bg-gray-100"],
-                                    inputWrapper: [
-                                        "border",
-                                        "bg-zinc-50",
-                                        "data-[hover=true]:bg-zinc-100",
-                                        "rounded-xl",
-                                    ],
-                                }}
-                            />
+                            <div>
+                                <Input variant={'bordered'} placeholder={'Search...'} radius={'full'}/>
+                            </div>
                         </NavbarItem>
                     </NavbarContent>
 
                     <NavbarContent className="hidden sm:flex gap-4" justify="end">
+
                         <Dropdown placement="bottom-end">
                             <DropdownTrigger>
                                 <Avatar as="button" isBordered>
@@ -95,6 +86,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 >
                                     退出登录
                                 </DropdownItem>
+                                <DropdownItem
+                                    key="sign-in"
+                                    onPress={() => {
+
+                                    }}>
+                                    个人信息
+                                </DropdownItem>
+
                             </DropdownMenu>
                         </Dropdown>
                     </NavbarContent>
@@ -113,7 +112,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {/* Drag handle */}
                     <div
                         onMouseDown={() => (isResizing.current = true)}
-                        className="w-2 cursor-col-resize"
+                        className="w-1 cursor-col-resize"
                     />
 
                     {/* Main content */}

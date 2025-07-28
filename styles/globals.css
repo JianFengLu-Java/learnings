@@ -65,4 +65,16 @@
   body {
     @apply bg-background text-foreground;
   }
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  [data-selectable="true"]:focus {
+    background-color: #f8e164 !important;
+    color: #030303 !important;
+
+    outline: 2px solid var(--border);
+    outline-offset: 0;
+
+
+  }
 }

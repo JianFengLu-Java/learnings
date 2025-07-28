@@ -4,15 +4,20 @@ import {Listbox, ListboxItem} from "@heroui/react";
 import {Input} from "@heroui/input";
 import {User} from "@heroui/user";
 import {Chip} from "@heroui/chip";
+import {LXButton} from "@/components/LXButton";
+import {IconAdFilled} from "@tabler/icons-react";
 
 const chat = ()=>{
     return (<>
         <div className={'w-full h-full flex '}>
             {/*好友列表+搜索栏*/}
             <div className={'justify-start w-1/6 min-w-[80px] border-r-1.5 px-2 py-1'}>
-                <Input variant={'faded'} placeholder={'Search friends'}/>
+                <div className={'flex items-center gap-2'}>
+                    <Input variant={'faded'} className={'flex-1'} placeholder={'Search friends'}/>
+                    <LXButton className={' w-[fit]'} isBordered={true} isIconOnly><IconAdFilled size={18}/></LXButton>
+                </div>
                 <Listbox variant={'faded'}>
-                    <ListboxItem><User name={'bob'} description={'1390703178@qq.com'} /></ListboxItem>
+                    <ListboxItem><User name={'bob'} avatarProps={{src:'https://http.cat/200'}} description={'1390703178@qq.com'} /></ListboxItem>
                 </Listbox>
             </div>
             <div className="h-full flex flex-col flex-1">
