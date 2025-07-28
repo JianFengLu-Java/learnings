@@ -14,7 +14,10 @@ export default withAuth(
 
         // 未登录，访问 dashboard，跳转到 /
         if (!isAuth && pathname.startsWith("/dashboard")) {
-            return NextResponse.redirect(new URL("/", req.url));
+            const loginUrl = new URL("/", req.url); // 重定向到登录页（/）
+            loginUrl.searchParams.set("callback", pathname);
+            loginUrl.searchParams.set("reason", "auth");
+            return NextResponse.redirect(loginUrl);
         }
 
         return NextResponse.next();
@@ -28,5 +31,5 @@ export default withAuth(
 
 // ✅ 重要：匹配所有需要判断登录状态的路由
 export const config = {
-    matcher: ["/", "/register", "/dashboard"],
+    matcher: ["/", "/register", "/dashboard",'/dashboard/:path*'],
 };

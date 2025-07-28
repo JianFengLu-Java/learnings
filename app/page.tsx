@@ -8,15 +8,27 @@ import {LXButton} from "@/components/LXButton";
 import {Image} from "@heroui/image";
 import {addToast, Avatar, Checkbox, Divider, Form, Tab} from "@heroui/react";
 import {Tabs} from "@heroui/tabs";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {LXQRCode} from "@/components/LXQrCode";
 import {io} from "socket.io-client"
-import {useRouter} from "next/navigation";
+import {useSearchParams,useRouter} from "next/navigation";
 import axios from "axios";
 import {signIn} from "next-auth/react";
 import {useForm} from "react-hook-form";
+import {Alert} from "@heroui/alert";
+import {Button} from "@heroui/button";
+import {Chip} from "@heroui/chip";
 
 export default function Home() {
+    const searchParams = useSearchParams();
+    const callback = searchParams.get('callback') || '/dashboard';
+    const reason = searchParams.get('reason');
+    const [message, setMessage] = useState('')
+    useEffect(() => {
+        if (reason==='auth'){
+            setMessage('请登陆后访问!');
+        }
+    },[reason])
     const [select, setSelect] = useState("access")
     const [loading, setLoading] = useState(false);
 
@@ -42,7 +54,13 @@ export default function Home() {
 
     // @ts-ignore
     return (
-        <section className="flex flex-col h-screen items-center justify-center ">
+
+        <section className="flex flex-col h-screen items-center justify-center relative">
+            {message && (<div className="flex items-center justify-center absolute top-4">
+                <Chip size='lg' color={'danger'}>
+                    {message}
+                </Chip>
+            </div>)}
             <Card className={'rounded-[30px]'}>
                 <CardBody className="p-0 h-[600px]">
 
