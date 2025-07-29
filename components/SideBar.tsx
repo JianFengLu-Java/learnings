@@ -1,10 +1,10 @@
 "use client";
 
 import {Listbox, ListboxItem, ListboxSection} from "@heroui/react";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {usePathname, useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
 import {IconDashboardFilled, IconSettings} from '@tabler/icons-react';
-import { IconBubbleText } from '@tabler/icons-react';
+import {IconBubbleText} from '@tabler/icons-react';
 
 export default function SideBar() {
     const pathname = usePathname();
@@ -41,7 +41,7 @@ export default function SideBar() {
                 aria-label="Sidebar Navigation"
                 selectedKeys={selectedKeys}
                 selectionMode="single"
-                disallowEmptySelection={true    }
+                disallowEmptySelection={true}
                 onSelectionChange={(keys) => {
                     const key = Array.from(keys)[0];
                     setSelectedKeys(new Set([key]));
@@ -50,9 +50,10 @@ export default function SideBar() {
                         router.push(target);
                     }
                 }}
+
                 itemClasses={{
                     base: `
-      px-3 py-2 rounded-xl box-border 
+      px-3 py-2 rounded-xl box-border mb-2 truncate overflow-hidden text-ellipsis
       data-[selected=true]:bg-yellow-300 data-[selected=true]:text-default-700  data-[selected=true]:outline-2 data-[selected=true]:outline-[#887b32] data-[selected=true]:outline data-[selected=true]:outline-offset-0
       data-[hover=true]:bg-yellow-300 data-[hover=true]:text-default-700 data-[hover=true]:outline-[#887b32] data-[hover=true]:outline-1 data-[hover=true]:outline data-[hover=true]:outline-offset-0
       [&>span:last-child]:hidden  
@@ -65,12 +66,19 @@ export default function SideBar() {
                     // className={itemClass}
                     description={"Home"}
                     endContent={null}
-                    startContent={<IconDashboardFilled size={36} className={'shrink-0'}/>}
+                    startContent={<IconDashboardFilled size={24} className={'shrink-0'}/>}
                 >
                     主页
                 </ListboxItem>
                 <ListboxItem key="chat"
-                startContent={<IconBubbleText size={24} className={'shrink-0'}/>}>
+                             startContent={
+                                 <IconBubbleText
+                                     size={24}
+                                     className={'shrink-0'}
+                                 />
+                }
+                    description={'Message'}
+                >
                     消息
                 </ListboxItem>
                 <ListboxSection title={'Settings'} className={'justify-end'}>
