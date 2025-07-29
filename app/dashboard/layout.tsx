@@ -1,22 +1,23 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+
 import {
     Navbar,
     NavbarBrand,
     NavbarContent,
     NavbarItem,
-} from "@heroui/navbar";
-import {
+    Autocomplete, AutocompleteItem,
     Avatar,
     Dropdown,
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Input,
 } from "@heroui/react";
 import { SessionProvider, signOut } from "next-auth/react";
 import SideBar from "@/components/SideBar";
-import {Input} from "@heroui/input";
+
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [sidebarWidth, setSidebarWidth] = useState(260);
@@ -107,6 +108,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         className="bg-white dark:bg-gray-900 border-r-2 border-gray-300 dark:border-gray-700"
                     >
                         <SideBar />
+                        <Autocomplete>
+                            <AutocompleteItem>
+                                hello
+                            </AutocompleteItem>
+                        </Autocomplete>
                     </div>
 
                     {/* Drag handle */}

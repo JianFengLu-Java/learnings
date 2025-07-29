@@ -1,25 +1,33 @@
 "use client"
 
-import {Listbox, ListboxItem} from "@heroui/react";
+import { Listbox, ListboxItem, useDisclosure} from "@heroui/react";
 import {Input, Textarea} from "@heroui/input";
 import {User} from "@heroui/user";
 import {Chip} from "@heroui/chip";
 import {LXButton} from "@/components/LXButton";
-import {IconAdFilled, IconChevronRight} from "@tabler/icons-react";
+import {IconAdFilled, IconChevronRight, IconUserPlus} from "@tabler/icons-react";
 import {Badge} from "@heroui/badge";
+import {Button} from "@heroui/button";
+import {Modal, ModalBody, ModalContent, ModalFooter, ModalHeader} from "@heroui/modal";
 
 const chat = ()=>{
+
+    const {isOpen,onOpen,onOpenChange} = useDisclosure()//从useDisclosure中解构出：isOpen onOpen onOpenChange
+
+    const search_friends = ()=>{
+        onOpen();
+    }
+
     return (<>
         <div className={'w-full h-full flex '}>
             {/*好友列表+搜索栏*/}
             <div className={'justify-start w-fit min-w-[120px] border-r-1.5 px-2 py-1'}>
                 <div className={'flex items-center gap-2'}>
-                    <Input variant={'faded'} className={'flex-1'} placeholder={'Search friends'}/>
-                    <LXButton className={' w-[fit]'} isBordered={true} isIconOnly><IconAdFilled size={18}/></LXButton>
+                    <Button className={' w-[fit]'}  variant={'faded'} onPress={search_friends} isIconOnly><IconUserPlus size={18}/></Button>
                 </div>
                 <Listbox variant={'faded'}>
 
-                    <ListboxItem className={'truncate overflow-hidden text-ellipsis'} endContent={<Chip color={"danger"} size={"sm"} className={'text-sm'}>678</Chip>} ><User name={'bob'} avatarProps={{src:'https://http.cat/200'}} description={'1390703178@qq.com'} /></ListboxItem>
+                    <ListboxItem className={'truncate overflow-hidden text-ellipsis'} endContent={<Chip color={"warning"} size={"sm"} className={'text-sm'}>678</Chip>} ><User name={'bob'} avatarProps={{src:'https://http.cat/200'}} description={'1390703178@qq.com'} /></ListboxItem>
 
                 </Listbox>
             </div>
@@ -65,6 +73,27 @@ const chat = ()=>{
 
             </div>
         </div>
+    {/*    提示框  参数：isOpen onChange*/}
+        <Modal onOpenChange={onOpenChange} isOpen={isOpen}>
+            <ModalContent>
+                {(onClose)=>{
+                    return (<>
+                        <ModalHeader></ModalHeader>
+                        <ModalBody className={'w-full '}>
+                            <div>
+                                <Input placeholder={'test'} variant={'faded'}></Input>
+                            </div>
+                        </ModalBody>
+                        <ModalFooter>
+                            <LXButton onPress={onClose} >OK</LXButton>
+                        </ModalFooter>
+                    </>)
+                }}
+            </ModalContent>
+        </Modal>
+
+
+
     </>)
 }
 export default chat;

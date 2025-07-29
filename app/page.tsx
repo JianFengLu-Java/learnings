@@ -1,13 +1,7 @@
 "use client"
 
-import {Link} from "@heroui/link";
-import {Card, CardBody} from "@heroui/card";
-
-import {Input} from "@heroui/input";
 import {LXButton} from "@/components/LXButton";
-import {Image} from "@heroui/image";
-import {addToast, Avatar, Checkbox, Divider, Form, Tab} from "@heroui/react";
-import {Tabs} from "@heroui/tabs";
+import {Input,Image,Chip,Button,Tabs,Card, CardBody,Link,addToast, Avatar, Checkbox, Divider, Form, Tab} from "@heroui/react";
 import {useEffect, useState} from "react";
 import {LXQRCode} from "@/components/LXQrCode";
 import {io} from "socket.io-client"
@@ -15,9 +9,7 @@ import {useSearchParams,useRouter} from "next/navigation";
 import axios from "axios";
 import {signIn} from "next-auth/react";
 import {useForm} from "react-hook-form";
-import {Alert} from "@heroui/alert";
-import {Button} from "@heroui/button";
-import {Chip} from "@heroui/chip";
+
 
 export default function Home() {
     const searchParams = useSearchParams();

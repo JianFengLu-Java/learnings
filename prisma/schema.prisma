@@ -14,14 +14,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
+enum RequestStatus{
+  PENDING
+  ACCPTEED
+  REJECTED
+}
 
-  id Int @id @default(autoincrement())
+model User{
+  //User信息
+  id String @id @default(uuid())
   name String @unique
   email String @unique
   createTime DateTime @default(now())
   password String @default("123")
+  avatarUrl String @default("https://http.cat/201")
 
+  //Friend 外键
+  sentRequest FriendRequest[] @relation("SentRequest")
+  receiverRequest FriendRequest[] @relation("ReceiverRequest")
+  // 发出的好友关系
+  friendshipsInitiated Friendship[] @relation("UserToFriends")
+
+  // 接收的好友关系
+  friendshipsReceived  Friendship[] @relation("FriendToUsers")
+}
+
+model FriendRequest{
+  id    String      @id @default(uuid())//ID
+  senderId String //发送者的ID
+  receiverId String //接受者的ID
+  message String?  //消息
+  createTime DateTime @default(now())
+  status RequestStatus @default(PENDING)//消息状态
+  responseTime DateTime?
+
+  //关系
+  sender User @relation("SentRequest",fields: [senderId],references: [id])
+  receiver User @relation("ReceiverRequest",fields: [receiverId],references: [id])
+
+}
+
+model Friendship {
+  id        String   @id @default(uuid())
+  userId    String
+  friendId  String
+  createdAt DateTime @default(now())
+
+  // 双向关系（User -> Friendship）
+  user   User @relation("UserToFriends", fields: [userId], references: [id])
+  friend User @relation("FriendToUsers", fields: [friendId], references: [id])
+
+  @@unique([userId, friendId]) // 防止重复添加
 }
 
 model Admin{

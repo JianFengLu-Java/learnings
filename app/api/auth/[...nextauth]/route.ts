@@ -1,13 +1,15 @@
+// app/api/auth/[...nextauth]/route.ts
+
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaClient } from "../../../generated/prisma";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaClient } from "../../../generated/prisma"; // 也可以改成 "@/generated/prisma"
 import bcrypt from "bcrypt";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+
 const prismaClient = new PrismaClient();
 
-const handler = NextAuth({
-    providers:[
+// 把配置提取出来，命名为 authOptions 并导出
+export const authOptions = {
+    providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: {
@@ -15,40 +17,52 @@ const handler = NextAuth({
                 password: { label: "password", type: "password" },
             },
             async authorize(credentials) {
-
-                const user = await prismaClient.user.findUnique(
-                    {
-                        where:{name:credentials.name}
-                    }
-                )
+                const user = await prismaClient.user.findUnique({
+                    where: { name: credentials.name },
+                });
 
                 if (!user) {
-                    throw new Error('用户名不存在')
+                    throw new Error("用户名不存在");
                 }
 
-                const hashedPassword = await bcrypt.compare(credentials.password,user.password)
-
-                if (!hashedPassword) {
-                    throw new Error('密码不正确')
+                const valid = await bcrypt.compare(credentials.password, user.password);
+                if (!valid) {
+                    throw new Error("密码不正确");
                 }
 
                 return {
-                    name:user.name,
-                    email:user.email
-                }
-            }
-        })
-
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                };
+            },
+        }),
     ],
-    session:{
-        strategy:'jwt'
+    session: {
+        strategy: "jwt",
+    },
+    pages: {
+        signIn: "/",
+    },
+    secret: process.env.NEXTAUTH_SECRET,
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token?.id) {
+                session.user.id = token.id as string;
+            }
+            return session;
+        },
     }
-    ,
-    pages:{
-        signIn:'/'
-    }
-    ,
-    secret: process.env.NEXTAUTH_SECRET
-})
+};
 
-export {handler as GET,handler as POST};
+// ✅ 使用 authOptions 创建 handler
+const handler = NextAuth(authOptions);
+
+// ✅ 导出 handler 和 authOptions
+export { handler as GET, handler as POST };
