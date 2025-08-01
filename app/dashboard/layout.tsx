@@ -7,7 +7,6 @@ import {
     NavbarBrand,
     NavbarContent,
     NavbarItem,
-    Autocomplete, AutocompleteItem,
     Avatar,
     Dropdown,
     DropdownItem,
@@ -108,11 +107,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         className="bg-white dark:bg-gray-900 border-r-2 border-gray-300 dark:border-gray-700"
                     >
                         <SideBar />
-                        <Autocomplete>
-                            <AutocompleteItem>
-                                hello
-                            </AutocompleteItem>
-                        </Autocomplete>
                     </div>
 
                     {/* Drag handle */}
